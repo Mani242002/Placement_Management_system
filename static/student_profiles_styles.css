@@ -1,0 +1,382 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f7f7;
+}
+/* Heading container */
+.heading-container {
+  background-image: url("css_bg/kk.jpeg");
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Main heading */
+.main-heading {
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  color: white;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  background-color: red;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 5px 10px;
+   border-style: groove;/* Change background color to red */
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+
+  background-color: rgb(199, 13, 13); /* Darken the background color on hover */
+}
+
+#home-button {
+  position: absolute;
+  top: 20px;
+  right: 150px;
+  color: white;
+  background-color: green;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 5px 10px;
+   border-style: groove;/* Change background color to red */
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#home-button:hover {
+
+  background-color: rgb(13, 78, 4); /* Darken the background color on hover */
+}
+
+/* Main heading buttons */
+.main-heading-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+button, select {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#addStudentBtn:hover{
+  background-color: green;
+}
+
+.searchContainer {
+  display: flex;
+}
+
+input[type="text"] {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#searchButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#searchButton:hover {
+  background-color: #0056b3;
+}
+
+.container {
+
+  margin: 20px auto;
+  padding: 20px;
+  background-image: url("css_bg/ck.jpeg");
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.main-heading {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  margin: 0;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  background-color: #e0e0e0;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+  background-color: #007bff;
+  color: #fff;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+
+
+tbody tr:hover {
+  background-color: white;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+button, select {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover, select:hover {
+  background-color: #0056b3;
+}
+
+.searchContainer {
+  display: flex;
+}
+
+input[type="text"] {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#searchButton {
+  height: 40px;
+  padding: 10px  ;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#searchButton:hover {
+  background-color: #0056b3;
+}
+/* Add styling for delete and update buttons */
+.delete-btn,
+.update-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  /* Add a fixed width */
+  width: 70px;
+  margin-right: 10px;
+  margin-top: 10px; /* Adjust this value as needed */
+
+}
+
+.update-btn:hover{
+  background-color: green;
+}
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+
+/* Modal styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+}
+
+/* Modal content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto; /* Adjusted margin to center the modal vertically */
+  padding: 20px;
+  border: 2px solid #888;
+  width: 50%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Close button */
+.close {
+  color: #aaa;
+  float: right; /* Align close button to the right */
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Form styles */
+form {
+  width: 100%;
+}
+
+label {
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 5px;
+  width: 50%;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 100%; /* Adjusted width to fill the entire width of the modal */
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Center submit button */
+button[type="submit"] {
+  display: block;
+  margin: 0 auto;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+
+/* Update modal styles */
+#updateStudentModal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto;
+}
+
+/* Update modal content */
+#updateStudentModal .modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Close button */
+#updateStudentModal .close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+#updateStudentModal .close:hover,
+#updateStudentModal .close:focus {
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Update form styles */
+#updateStudentModal form {
+  width: 100%;
+}
+
+#updateStudentModal label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: block;
+}
+
+#updateStudentModal input[type="text"],
+#updateStudentModal input[type="email"],
+#updateStudentModal input[type="number"] {
+  width: calc(100% - 22px); /* Adjusted width to account for padding and border */
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#updateStudentModal input[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#updateStudentModal input[type="submit"]:hover {
+  background-color: #0056b3;
+}
+

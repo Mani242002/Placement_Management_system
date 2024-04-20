@@ -1,0 +1,541 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-image: url("css_bg/ac.jpg");
+    background-size: cover;
+}
+.back-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
+    border-color: white ;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight:bold;
+    padding: 5px 15px;
+    border-style: groove;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    background-color: transparent;
+  }
+
+  .back-button:hover {
+
+    background-color: red; /* Darken the background color on hover */
+  }
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    background-image: url("css_bg/ab.jpg");
+    background-size: cover;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: -1;
+}
+
+.header {
+    background-image: url("css_bg/aa.jpg");
+    background-size: cover;
+    color: black;
+    padding: 20px;
+}
+
+.header h1 {
+    margin: 0;
+    text-align: center;
+}
+
+.content {
+    padding: 20px;
+    display: flex;
+}
+
+/* CSS for image holder */
+.image-holder {
+    flex: 1;
+    position: relative; /* Position relative to enable absolute positioning of overlay */
+    text-align: left;
+}
+
+/* CSS for profile picture container */
+.profile-picture-container {
+    position: relative;
+    display: inline-block;
+    width: 250px; /* Match the image width */
+    height: 250px; /* Match the image height */
+    overflow: hidden; /* Hide anything that goes outside the container */
+}
+
+/* CSS for profile picture */
+#profile-picture {
+    max-width: 250px;
+    max-height: 250px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Ensure profile picture is in front of the placeholder image */
+}
+/* CSS for placeholder image */
+#placeholder-image {
+    width: 250px;
+    height: 250px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0; /* Ensure placeholder image is behind the profile picture */
+}
+/* CSS for overlay */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease; /* Smooth transition effect */
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2; /* Ensure overlay is in front of the profile picture and placeholder image */
+}
+/* CSS for buttons inside overlay */
+.overlay button {
+    margin: 5px;
+    width: 100px; /* Set a fixed width for all buttons */
+}
+
+/* Show overlay on hover */
+.profile-picture-container:hover .overlay {
+    opacity: 1;
+}
+
+/* Adjust button size on hover */
+.profile-picture-container:hover .overlay button {
+    width: 120px; /* Increase button width on hover */
+}
+
+/* Show overlay on hover */
+.profile-picture-container:hover .overlay {
+    opacity: 1;
+}
+
+
+.details-holder {
+    flex: 1;
+    margin-left: -400px; /* Add margin-left */
+}
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: absolute; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 500px; /* Full width */
+  height: 500px; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 500px; /* Adjust this to set the width */
+  max-width: 500px; /* Maximum width */
+  height: 500px; /* Adjust this to set the height */
+  max-height: 500px; /* Maximum height */
+}
+
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+#additionalDetails {
+    background-color: blue;
+    color: white;
+    position: absolute;
+    right: 0;
+    margin-right: 20px;
+}
+
+#additionalDetails:hover {
+    background-color: green;
+}
+
+#additionalContainer {
+    width: 1150px;
+    margin: 50px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    height: 400px;
+    position: relative; /* Add this to enable absolute positioning of the buttons */
+}
+
+#closeButton {
+    position: absolute; /* Position the buttons absolutely */
+    bottom: 10px; /* Position the buttons at the bottom of the container */
+    width: 70px; /* Set a fixed width for the buttons */
+    height:50px;
+    top:0;
+    right:0;
+    border: groove;
+    border-color: black;
+    background-color: transparent;
+    color: white;
+}
+
+
+#closeButton:hover {
+    background-color: #ff3333; /* Brighter red color on hover */
+}
+
+
+/* CSS for individual containers */
+#personalDetailsContainer, #skillsContainer, #referencesContainer {
+    background-image: url("css_bg/ab.jpg");
+
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 10px 0;
+}
+
+/* CSS for modals */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Adjust this to set the width */
+    max-width: 500px; /* Maximum width */
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    position:fixed;
+    margin: -50px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 80%; /* Adjust this to set the width */
+    max-width: 500px; /* Maximum width */
+    overflow:auto;
+}
+
+/* Modal Header */
+.modal-content h2 {
+    margin-top: 0;
+}
+
+/* Modal Close Button */
+.modal-content .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.modal-content .close:hover,
+.modal-content .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Form Styling */
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content form label {
+    margin-bottom: 10px;
+}
+
+.modal-content form input[type="text"],
+.modal-content form input[type="date"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.modal-content form button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-content form button:hover {
+    background-color: #45a049;
+}
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: -5auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Style the select elements */
+#skillSelect, #proficiencySelect {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Style the Add button */
+#addSkillButton {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#addSkillButton:hover {
+    background-color: #45a049;
+}
+
+/* Style the skills table */
+#skillsTable {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#skillsTable td, #skillsTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#skillsTable tr:nth-child(even){background-color: #f2f2f2;}
+
+#skillsTable tr:hover {background-color: #ddd;}
+
+#skillsTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.skill-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+        .delete-button {
+            background-color: #ddd;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .delete-button:before {
+            content: '';
+            display: block;
+            width: 10px;
+            height: 2px;
+            background-color: black;
+        }
+        .delete-button:before {
+            transform: rotate(180deg);
+        }
+/* Modal */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: -5% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    display: flex;
+    flex-direction: column;
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right; /* Positioned at the right */
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Input Fields */
+input[type=text] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+/* Boxes */
+.box {
+    border: 2px solid black;
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+}
+
+/* Submit Button */
+#submitReferences {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    align-self: center; /* Centered at the bottom */
+}
+.reference {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .editButton {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        margin: 2px 2px;
+        cursor: pointer;
+    }

@@ -1,0 +1,230 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+#fab-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 36px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+#fab-btn:hover {
+    transform: rotate(180deg); /* Rotate the button when hovered */
+    background-color: green;
+}
+
+header {
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 5px 10px;
+     border-style: groove;/* Change background color to red */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: red; /* Darken the background color on hover */
+}
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    width: 600px;
+}
+.modal-content {
+    text-align: center;
+    position: relative; /* Ensure relative positioning for absolute positioning of labels */
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+}
+
+.modal-content .form-group {
+    margin-bottom: 20px;
+    position: relative; /* Ensure relative positioning for absolute positioning of labels */
+}
+
+.modal-content label {
+    display: block;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: -15px;
+    transform: translateY(-50%);
+}
+
+
+.modal-content input[type="text"],
+.modal-content textarea {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.modal-content textarea {
+    resize: vertical;
+}
+
+.modal-content button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.modal-content button:hover {
+    background-color: green;
+}
+
+#cancel-btn:hover {
+    background-color: red;
+}
+
+
+
+.close-modal {
+    position: fixed;
+    top: 5px;
+    right: 12px;
+    cursor: pointer;
+    font-size: 24px;
+    color: #999;
+}
+
+.close-modal:hover {
+    color: red;
+}
+
+/* Style for form inputs and buttons */
+.form-group {
+    margin-bottom: 15px;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #45a049;
+
+}
+#fullPostingModal .modal-content {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    position: relative;
+    max-height: 400px;
+    overflow-y: auto;
+    text-align: left;
+}
+
+#fullPostingTitle {
+    text-align: center;
+}
+
+#fullPostingDescription {
+    white-space: pre-wrap;
+}
+.job-post {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Align buttons to the right */
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    position: relative;
+
+}
+
+.job-post h3 {
+    margin: 0;
+    flex: 1; /* Allow the title to grow and take up available space */
+}
+
+.see-full-btn,
+.delete-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 8px; /* Adjusted padding to make the buttons smaller */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto; /* Ensures the button width adjusts based on content */
+}
+
+.delete-btn {
+    margin-left: 20px; /* Set the gap between buttons to 20px */
+}
+
+.see-full-btn:hover {
+    background-color: green;
+}
+
+.delete-btn:hover {
+    background-color: red;
+}
