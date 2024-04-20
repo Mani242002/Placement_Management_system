@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='applications_styles.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Applications</title>
+</head>
+<body>
+<div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+  </div>
+<button class="back-button" id="backButton">&lt;Back👋</button>
+    <div class="container">
+        <h1>Job Status</h1>
+        <select id="jobTitleSelect">
+            <option>All</option>  <!-- "All" option added -->
+            <!-- Other options will be added here by JavaScript -->
+        </select>
+    </div>
+
+    <div class="container">
+        <table id="jobStatusTable">
+            <tr>
+                <th>Student ID</th>
+                <th>Job Title</th>
+                <th>Status</th>
+            </tr>
+            <!-- Table rows will be added here by JavaScript -->
+        </table>
+    </div>
+
+    <script>
+     document.getElementById("backButton").addEventListener("click", function() {
+    window.location.href = '/admin/dashboard';
+});
+    $(document).ready(function() {
+        $.getJSON("/fetch/job_titles", function(data) {
+            var select = $("#jobTitleSelect");
+            $.each(data, function(key, value) {
+                var option = $("<option>").text(value);
+                select.append(option);
+            });
+        });
+
+        function updateTable(jobTitle) {
+            $.getJSON("/fetch/application/" + jobTitle, function(data) {
+                var table = $("#jobStatusTable");
+                table.find("tr:gt(0)").remove();  // Remove existing rows
+                $.each(data, function(key, value) {
+                    var row = $("<tr>");
+                    row.append($("<td>").text(value.student_id));
+                    row.append($("<td>").text(value.job_title));
+                    row.append($("<td>").text(value.status));
+                    table.append(row);
+                });
+            });
+        }
+
+        // Update the table when the page loads
+        updateTable('All');
+
+        $("#jobTitleSelect").change(function() {
+            var selectedJobTitle = $(this).val();
+            updateTable(selectedJobTitle);
+        });
+    });
+    </script>
+</body>
+</html>

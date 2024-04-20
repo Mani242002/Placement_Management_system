@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Postings</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='job_notifi_styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Job Postings</h1>
+        <a href="/admin/dashboard" class="back-button">&lt; Back 👋</a>
+    </header>
+    <h1>Inbox</h1>
+    <div class="fab">
+        <button id="fab-btn">+</button>
+    </div>
+    <div id="inbox" class="email-list">
+        {% for job in job_notifi %}
+        <div class="job-post">
+            <h3>{{ job[1] }}</h3>
+            <button class="see-full-btn">Details</button>
+            <p style="display: none;"><strong>Description:</strong> {{ job[2] }}</p>
+            <p style="display: none;"><strong>Skills Required:</strong> {{ job[3] }}</p>
+            <button class="delete-btn" data-id="{{ job[0] }}">Delete</button>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="modal" id="fullPostingModal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeFullPostingModal">&times;</span>
+        <h2 id="fullPostingTitle"></h2>
+        <p id="fullPostingDescription"></p>
+        <p id="fullPostingSkills"></p>
+    </div>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h2>Add Job</h2>
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="5" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="skills">Skills:</label>
+            <textarea id="skills" name="skills" rows="5" required></textarea>
+        </div>
+        <button id="post-btn">Add</button>
+        <button id="cancel-btn">Cancel</button>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fabButton = document.getElementById('fab-btn');
+        const modal = document.getElementById('modal');
+        const cancelButton = document.getElementById('cancel-btn');
+        const postButton = document.getElementById('post-btn');
+        const inbox = document.getElementById('inbox');
+        const fullPostingModal = document.getElementById('fullPostingModal');
+        const closeFullPostingModal = document.getElementById('closeFullPostingModal');
+
+        // Function to fetch job postings from the server and update the UI
+function displayJobs() {
+    const inbox = document.getElementById('inbox');
+    setInterval(function() {
+        fetch('/get_job_postings')  // Make sure this URL matches your server route
+            .then(response => response.json())
+            .then(jobs => {
+                inbox.innerHTML = ''; // Clear existing job postings
+                for (let job of jobs) {
+                    inbox.innerHTML += `
+                        <div class="job-post">
+                            <h3>${job.title}</h3>
+                            <button class="see-full-btn">Details</button>
+                            <p style="display: none;"><strong>Description:</strong> ${job.description}</p>
+                            <p style="display: none;"><strong>Skills Required:</strong> ${job.skills}</p>
+                            <button class="delete-btn" data-id="${job.id}">Delete</button>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching job postings:', error);
+            });
+    }, 5000); // Fetch updates every 5 seconds
+}
+
+
+        // Show modal when the "+" button is clicked
+        fabButton.addEventListener('click', function() {
+            modal.style.display = 'block';
+        });
+
+        // Hide modal when the cancel button is clicked
+        cancelButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+            document.getElementById('title').value = ''; // Clear title input field
+            document.getElementById('description').value = ''; // Clear description input field
+            document.getElementById('skills').value = ''; // Clear skills input field
+        });
+
+        // Define linkify function
+function linkify(inputText) {
+    var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+    // URLs starting with http://, https://, or ftp://
+    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=_|!:,.;]*[-A-Z0-9+&@#\/%= _ |])/gi;
+    replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+    // URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gi;
+    replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+    return replacedText;
+}
+
+// Add job posting when the post button is clicked
+postButton.addEventListener('click', function() {
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const skills = document.getElementById('skills').value;
+
+    // You can perform validation here before sending the data to the server
+
+    // Send the data to the server using fetch or XMLHttpRequest
+    fetch('/add_job_posting', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            title: title,
+            description: description,
+            skills: skills
+        })
+    }).then(response => {
+        // Handle the response from the server
+        if (response.ok) {
+            // Job posting added successfully
+            modal.style.display = 'none';
+            // Reload the page to fetch updated job postings after adding a new job
+            location.reload();
+        } else {
+            // Handle errors
+            console.error('Error adding job posting');
+        }
+    }).catch(error => {
+        console.error('Error adding job posting:', error);
+    });
+});
+
+// Add event listener for the "Details" button
+inbox.addEventListener('click', function(event) {
+    if (event.target.classList.contains('see-full-btn')) {
+        const jobPost = event.target.parentNode;
+        const title = jobPost.querySelector('h3').textContent; // Get title from h3 element
+        const description = jobPost.querySelector('p:nth-child(3)').textContent;
+        const skills = jobPost.querySelector('p:nth-child(4)').textContent;
+
+        // Display modal with job details
+        document.getElementById('fullPostingTitle').textContent = title; // Display title
+        document.getElementById('fullPostingDescription').innerHTML = linkify(description); // Call linkify function
+        document.getElementById('fullPostingSkills').textContent = skills;
+        fullPostingModal.style.display = 'block';
+    }
+});
+
+        // Add event listener for the "Delete" button using event delegation
+inbox.addEventListener('click', function(event) {
+    if (event.target.classList.contains('delete-btn')) {
+        const jobId = event.target.dataset.id; // Get job ID from data-id attribute
+        // Send AJAX request to delete job using jobId
+        fetch(`/delete_job/${jobId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove job post from the DOM
+                event.target.parentNode.remove();
+            } else {
+                alert('Failed to delete job. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the job.');
+        });
+    }
+});
+
+
+        // Close full posting modal when the close button is clicked
+        closeFullPostingModal.addEventListener('click', function() {
+            fullPostingModal.style.display = 'none';
+        });
+
+        // Fetch job postings initially when the page loads
+        fetchJobPostings();
+    });
+</script>
+</body>
+</html>
+
+
+
+

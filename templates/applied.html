@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='applied_styles.css') }}">
+<title>Applied Status</title>
+</head>
+<body>
+    <button class="back-button" id="backButton">&lt;Back👋</button>
+    <div class="heading-container">
+    <h1>Applied Status</h1>
+    </div>
+    <div class="table-container">
+        <form action="/api/update_status" method="post" onsubmit="return showAlert()">
+            <table id="statusTable">
+                <tr>
+                    <th>Job Title</th>
+                    <th>Status</th>
+                </tr>
+                <!-- Table data will go here -->
+            </table>
+            <input type="submit" value="Update Status">
+        </form>
+    </div>
+
+    <script>
+    document.getElementById("backButton").addEventListener("click", function() {
+    window.location.href = '/student/dashboard';
+});
+        function showAlert() {
+            alert("Details saved successfully!");
+            return true;
+        }
+
+
+
+        window.onload = function() {
+            fetch('/api/job_titles')
+                .then(response => response.json())
+                .then(data => {
+                    let table = document.getElementById('statusTable');
+                    for (let title of data) {
+                        let row = table.insertRow(-1);
+                        let cell1 = row.insertCell(0);
+                        let cell2 = row.insertCell(1);
+                        cell1.textContent = title;
+
+                        // Add two radio buttons to the status cell
+                        let radioButton1 = document.createElement('input');
+                        radioButton1.type = 'radio';
+                        radioButton1.name = title; // Use the job title as the name to group the radio buttons
+                        radioButton1.value = 'Applied'; // The value that will be sent to the server
+                        radioButton1.id = title + 'Applied'; // Unique ID for the 'Applied' radio button
+                        radioButton1.className = 'status-radio-button'; // Add a class for styling
+                        let label1 = document.createElement('label');
+                        label1.htmlFor = title + 'Applied';
+                        label1.textContent = 'Applied';
+
+                        let radioButton2 = document.createElement('input');
+                        radioButton2.type = 'radio';
+                        radioButton2.name = title; // Use the job title as the name to group the radio buttons
+                        radioButton2.value = 'Not Applied'; // The value that will be sent to the server
+                        radioButton2.id = title + 'NotApplied'; // Unique ID for the 'Not Applied' radio button
+                        radioButton2.className = 'status-radio-button'; // Add a class for styling
+                        let label2 = document.createElement('label');
+                        label2.htmlFor = title + 'NotApplied';
+                        label2.textContent = 'Not Applied';
+
+                        cell2.appendChild(radioButton1);
+                        cell2.appendChild(label1);
+                        cell2.appendChild(radioButton2);
+                        cell2.appendChild(label2);
+                    }
+                });
+
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='student_resumes_styles.css') }}">
+    <title>Student Resume</title>
+</head>
+<body>
+    <div class="container">
+        <div class="upload-section">
+            <h2>Upload Resume</h2>
+            <div class="upload-section">
+                <input type="file" id="fileUpload" accept=".pdf,.doc,.docx" />
+                <button id="uploadButton">Upload</button>
+                <button id="deleteButton">Delete</button>
+            </div>
+        </div>
+        <button class="back-button" id="backButton">&lt;Back</button>
+        <div class="view-section">
+            <h2>Canvas</h2>
+            <iframe id="resumeViewer" style="width:100%;height:500px;"></iframe>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById("backButton").addEventListener("click", function() {
+    window.location.href = '/student/dashboard';
+});
+        document.getElementById('uploadButton').addEventListener('click', function() {
+            var fileInput = document.getElementById('fileUpload');
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('File uploaded successfully:', data);
+                alert('Resume uploaded successfully');
+                // Fetch the uploaded file and display it in the iframe
+                fetch('/get_file')
+                .then(response => response.text())
+                .then(path => {
+                    document.getElementById('resumeViewer').src = path;
+                });
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+        });
+        document.getElementById('deleteButton').addEventListener('click', function() {
+            fetch('/delete/file', {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('File deleted successfully:', data);
+                alert('Resume deleted successfully');
+                // Clear the iframe
+                document.getElementById('resumeViewer').src = '';
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+        });
+
+    </script>
+</body>
+</html>

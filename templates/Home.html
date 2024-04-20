@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Management System</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Home_styles.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome CSS -->
+</head>
+<body>
+  <div class="background-image"></div>
+  <div class="container">
+    <div class="top-space"></div>
+    <h2>Welcome to Placement Management System</h2>
+    <div class="login-box">
+      <h3>Login</h3>
+      {% if error %}
+      <p style="color: red;">{{ error }}</p>
+      {% endif %}
+      <form id="login-form">
+        <div class="textbox">
+          <i class="fas fa-user"></i>
+          <input type="text" placeholder="Username" name="username" required>
+        </div>
+        <div class="textbox">
+          <i class="fas fa-lock"></i>
+          <input type="password" placeholder="Password" name="password" id="password" required>
+          <span class="toggle-password" onclick="togglePasswordVisibility()">
+            <i class="fas fa-eye"></i>
+          </span>
+        </div>
+        <div class="login-options">
+          <input type="radio" id="admin-login" name="login-type" value="admin" checked>
+          <label for="admin-login">Admin</label>
+          <input type="radio" id="student-login" name="login-type" value="student">
+          <label for="student-login">Student</label>
+        </div>
+        <button type="button" class="btn" onclick="login()">Login</button> <!-- Changed type to 'button' -->
+      </form>
+    </div>
+  </div>
+  <footer>
+  <div class="footer-content">
+    <div class="contact-info">
+      <h3>Contact Us</h3>
+      <p>Email: <a href="mailto:vkrvnbengineering@gmail.com">vkrvnbengineering@gmail.com</a></p>
+      <p>Phone: <a href="tel:+918674242188">91-08674-242188</a>, <a href="tel:+918674242189">91-08674-242189</a></p>
+      <p>Instagram: <a href="https://www.instagram.com/vkrvnb_official/">@vkrvnb_official</a></p>
+      <p>Facebook: <a href="https://www.facebook.com/vkrvnb2008/">@vkrvnb2008</a></p>
+    </div>
+    <div class="about">
+      <h3>About Us</h3>
+      <p>Established in 2008, VKR, VNB & AGK College of Engineering is a self-financing institution under the General and Technical Education Society of Gudivada. With state-of-the-art facilities and a focus on evolving with technological advancements, the college offers undergraduate and postgraduate courses recognized by AICTE and affiliated with JNTU Kakinada.</p>
+    </div>
+    <div class="college-details">
+      <h3>College Details</h3>
+      <p>Eluru Road, Gudivada, Krishna Dist., Andhra Pradesh-521301</p>
+      <p>Website: <a href="https://vkrvnbcoe.org/" target="_blank">https://vkrvnbcoe.org/</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function login() {
+    var username = document.getElementsByName('username')[0].value;
+    var password = document.getElementsByName('password')[0].value;
+    var role = document.querySelector('input[name="login-type"]:checked').value;
+
+    // Perform form submission using JavaScript
+    fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: username, password: password, role: role }),
+    })
+    .then(response => {
+      if (response.redirected) {
+        window.location.href = response.url; // Redirect to the appropriate dashboard
+      } else {
+        // Display error message if authentication fails
+        alert('Invalid credentials. Please try again.');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function togglePasswordVisibility() {
+    var passwordInput = document.getElementById("password");
+    var eyeIcon = document.querySelector(".toggle-password i");
+
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      eyeIcon.classList.remove("fa-eye");
+      eyeIcon.classList.add("fa-eye-slash");
+    } else {
+      passwordInput.type = "password";
+      eyeIcon.classList.remove("fa-eye-slash");
+      eyeIcon.classList.add("fa-eye");
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Admin_Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='admin_styles.css') }}">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body>
+    <section id="intro">
+      <div class="info">
+        <img class="admin" src="{{ url_for('static', filename='images/ad.jpeg') }}" />
+        <h1>Adminstrator Page</h1>
+        <a href="/logout" class="logout-btn">Logout</a>
+        <a href="#content" class="button explore">Explore</a>
+      </div>
+      <div class="split-beer">
+    <img class="beer" src="{{ url_for('static', filename='images/gg1.jpg') }}" />
+    <img class="beer" src="{{ url_for('static', filename='images/gg2.jpg') }}" />
+    <img class="beer" src="{{ url_for('static', filename='images/gg3.jpg') }}" />
+</div>
+    </section>
+
+    <section id="content">
+      <!-- Cards -->
+      <div class="card">
+  <img class="card-img" src="{{ url_for('static', filename='images/adl.png') }}" />
+  <div class="title">
+    <h2>Admin Credentials</h2>
+  </div>
+  <div class="more">
+          <button class="modal-open" data-modal="modal1">
+            more<ion-icon
+              class="open-icon"
+              name="open-outline"
+              aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+</div>
+
+      <div class="card">
+        <img class="card-img" src="{{ url_for('static', filename='images/pr.png') }}" />
+        <div class="title">
+          <h2>Student Profiles</h2>
+        </div>
+        <div class="more">
+          <button class="modal-open" data-modal="modal2">
+            more<ion-icon
+              class="open-icon"
+              name="open-outline"
+              aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="{{ url_for('static', filename='images/job.png') }}" />
+        <div class="title">
+          <h2>Job Postings</h2>
+        </div>
+        <div class="more">
+          <button class="modal-open" data-modal="modal3">
+            more<ion-icon
+              class="open-icon"
+              name="open-outline"
+              aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="{{ url_for('static', filename='images/app.png') }}" />
+        <div class="title">
+          <h2>Applications</h2>
+        </div>
+        <div class="more">
+          <button class="modal-open" data-modal="modal4">
+            more<ion-icon
+              class="open-icon"
+              name="open-outline"
+              aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="{{ url_for('static', filename='images/res.jpg') }}" />
+        <div class="title">
+          <h2>Resumes</h2>
+        </div>
+        <div class="more">
+          <button class="modal-open" data-modal="modal5">
+            more<ion-icon
+              class="open-icon"
+              name="open-outline"
+              aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="{{ url_for('static', filename='images/cr.png') }}" />
+        <div class="title">
+          <h2>Student Credentials</h2>
+        </div>
+        <div class="more">
+          <button class="modal-open" data-modal="modal6">
+            more<ion-icon
+              class="open-icon"
+              name="open-outline"
+              aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+        <div class="card">
+        <img class="card-img" src="{{ url_for('static', filename='images/cl.png') }}" />
+        <div class="title">
+          <h2>Cover Letter</h2>
+        </div>
+        <div class="more">
+          <button class="modal-open" data-modal="modal7">
+            more<ion-icon
+              class="open-icon"
+              name="open-outline"
+              aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+        <div class="card">
+        <img class="card-img" src="{{ url_for('static', filename='images/top.jpg') }}" />
+        <div class="title">
+          <h2>Top Performers</h2>
+        </div>
+        <div class="more">
+          <button class="modal-open" data-modal="modal8">
+            more<ion-icon
+              class="open-icon"
+              name="open-outline"
+              aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+
+    </section>
+
+    <footer>
+      <p>
+        Copyright © VKR Group of Institutions. All Rights Reserved
+      </p>
+      <p>Designed & Maintained by Dept of CSE</p>
+    </footer>
+</body>
+<!-- partial -->
+   <script>
+  const modalOpenBtns = document.querySelectorAll(".modal-open");
+  const modalCloseBtns = document.querySelectorAll(".modal-close");
+  const body = document.querySelector("body");
+
+  modalOpenBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      let modal = btn.getAttribute("data-modal");
+      // Define the mapping of modal IDs to corresponding HTML pages
+      const modalPageMap = {
+        modal1: "/admin_cred.html",
+        modal2: "/student_profiles.html",
+        modal3: "/job_notifi.html",
+        modal4: "/applications.html",
+        modal5: "/resumes.html",
+        modal6: "/student_cred.html",
+        modal7: "/cover_letter.html",
+        modal8: "/top_performer_post.html"
+      };
+      // Get the URL corresponding to the clicked modal
+      let pageUrl = modalPageMap[modal];
+      // Redirect to the corresponding HTML page
+      window.location.href = pageUrl;
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Credentials</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='admin_cred_styles.css') }}">
+</head>
+<body>
+ <div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+  </div>
+  <div class="container">
+    <h1>Admin Credentials</h1>
+    <a href="/admin/dashboard" class="back-button">&lt; Back</a>
+    <button id="addAdminBtn">Add New Admin</button>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Password</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+    {% for admin in admin_cred %}
+    <tr>
+        <td>{{ admin[0] }}</td>
+        <td>{{ admin[1] }}</td>
+        <td>{{ admin[2] }}</td>
+        <td>
+            <form action="/delete_admin" method="POST">
+                <input type="hidden" name="admin_id" value="{{ admin[0] }}">
+                <button type="submit" class="deleteBtn">Delete</button>
+            </form>
+            <button class="updateBtn" data-id="{{ admin[0] }}">Update</button>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+    </table>
+  </div>
+
+  <!-- Modal for adding new admin -->
+  <div id="addAdminModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Add New Admin</h2>
+      <form id="addAdminForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password" required>
+        <button type="submit">Add Admin</button>
+      </form>
+    </div>
+  </div>
+  <!-- Modal for updating admin details -->
+  <div id="updateAdminModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Update Admin Details</h2>
+      <form id="updateAdminForm">
+        <input type="hidden" id="adminIdToUpdate">
+        <label for="updatedUsername">Updated Username:</label>
+        <input type="text" id="updatedUsername" name="updatedUsername" required>
+        <label for="updatedPassword">Updated Password:</label>
+        <input type="text" id="updatedPassword" name="updatedPassword" required>
+        <button type="submit">Update Admin</button>
+      </form>
+    </div>
+  </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const addAdminBtn = document.getElementById('addAdminBtn');
+    const addAdminModal = document.getElementById('addAdminModal');
+    const closeModal = document.querySelector('.close');
+    const addAdminForm = document.getElementById('addAdminForm');
+    const adminTableBody = document.querySelector('tbody');
+    const updateAdminModal = document.getElementById('updateAdminModal');
+
+    // Event listener for "Add New Admin" button
+    addAdminBtn.addEventListener('click', function() {
+      addAdminModal.style.display = 'block';
+    });
+
+    // Event listener for closing the modal
+    closeModal.addEventListener('click', function() {
+      addAdminModal.style.display = 'none';
+    });
+
+    // Event listener for submitting the add admin form
+    addAdminForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      // Get form data
+      const formData = new FormData(addAdminForm);
+      // Make AJAX request to add new admin
+      fetch('/add_admin', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // If admin added successfully, close modal and refresh admin table
+          addAdminModal.style.display = 'none';
+          fetchAdminCredentials();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+    // Function to fetch and display admin credentials
+    function fetchAdminCredentials() {
+      fetch('/admin/get_admin_credentials')
+      .then(response => response.json())
+      .then(data => {
+        // Clear existing table rows
+        adminTableBody.innerHTML = '';
+        // Append new table rows with admin credentials
+        data.forEach(admin => {
+          const row = `
+            <tr>
+              <td>${admin[0]}</td>
+              <td>${admin[1]}</td>
+              <td>${admin[2]}</td>
+              <td>
+                <button class="deleteBtn" data-id="{{ admin_cred[0] }}">Delete</button>
+                <button class="updateBtn" data-id="${admin[0]}">Update</button>
+              </td>
+            </tr>
+          `;
+          adminTableBody.innerHTML += row;
+        });
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+    // Initial fetch of admin credentials when page loads
+    fetchAdminCredentials();
+
+    // Event listener for delete button click
+    adminTableBody.addEventListener('click', function(event) {
+      if (event.target.classList.contains('deleteBtn')) {
+        const adminId = event.target.parentElement.parentElement.querySelector('td:first-child').textContent;
+        // Make AJAX request to delete admin using DELETE method
+        fetch(`/delete_admin`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ admin_id: adminId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // If admin deleted successfully, refresh admin table
+            fetchAdminCredentials();
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      } else if (event.target.classList.contains('updateBtn')) {
+        const adminId = event.target.dataset.id;
+        // Populate the modal with admin details to be updated
+        const adminUsername = event.target.parentElement.parentElement.querySelector('td:nth-child(2)').textContent;
+        const adminPassword = event.target.parentElement.parentElement.querySelector('td:nth-child(3)').textContent;
+        document.getElementById('adminIdToUpdate').value = adminId;
+        document.getElementById('updatedUsername').value = adminUsername;
+        document.getElementById('updatedPassword').value = adminPassword;
+        // Display the update admin modal
+        updateAdminModal.style.display = 'block';
+      }
+    });
+
+    // Event listener for closing the update admin modal
+    document.querySelector('#updateAdminModal .close').addEventListener('click', function() {
+      updateAdminModal.style.display = 'none';
+    });
+
+    // Event listener for submitting the update admin form
+    document.getElementById('updateAdminForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const adminId = document.getElementById('adminIdToUpdate').value;
+      const updatedUsername = document.getElementById('updatedUsername').value;
+      const updatedPassword = document.getElementById('updatedPassword').value;
+
+      // Make AJAX request to update admin details
+      fetch(`/update_admin/${adminId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username: updatedUsername, password: updatedPassword })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // If admin details updated successfully, close modal and refresh admin table
+          updateAdminModal.style.display = 'none';
+          fetchAdminCredentials();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  });
+</script>
+</body>
+</html>

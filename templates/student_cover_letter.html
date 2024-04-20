@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cover Letter</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='cover_letter_styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Cover Letter</h1>
+        <a href="/student/dashboard" class="back-button">&lt; Back 👋</a>
+    </header>
+
+    <!-- Modal -->
+
+    <table>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Cover Letter</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if cover_letters %}
+                {% for cover_letter in cover_letters %}
+                <tr>
+                    <td>{{ cover_letter[0] }}</td>
+                    <td>{{ cover_letter[1] }}</td>
+                    <td>
+                        <button onclick="openFile('{{ cover_letter[2] }}')">View</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">No cover letters available.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <script>
+
+        function openFile(fileName) {
+            var filePath = '/cover_letter/' + fileName;
+            window.open(filePath, '_blank');
+        }
+
+    </script>
+</body>
+</html>

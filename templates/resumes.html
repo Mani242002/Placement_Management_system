@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='resumes_styles.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Resumes</title>
+</head>
+<body>
+<div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+  </div>
+<button class="back-button" id="backButton">Back👋</button>
+    <div class="container">
+        <div class="header">
+            <h1>Student Resumes</h1>
+            <div class="search-container">
+                <!-- Search button added below -->
+                <input type="text" id="searchInput" placeholder="Search..">
+                <button id="searchButton">Search</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container1">
+        <table id="resumesTable">
+            <tr>
+                <th>Student ID</th>
+                <th>Resume</th>
+            </tr>
+            <!-- Table rows will be added here by JavaScript -->
+        </table>
+    </div>
+
+    <script>
+    document.getElementById("backButton").addEventListener("click", function() {
+    window.location.href = '/admin/dashboard';
+});
+    $(document).ready(function() {
+        function updateTable() {
+            $.getJSON("/fetch/resumes", function(data) {
+                var table = $("#resumesTable");
+                table.find("tr:gt(0)").remove();  // Remove existing rows
+                $.each(data, function(key, value) {
+                    var row = $("<tr>");
+                    row.append($("<td>").text(value.student_id));
+                    var viewButton = $("<button>").text("View").click(function() {
+                        window.open(value.resume_path, '_blank');
+                    });
+                    row.append($("<td>").append(viewButton));
+                    table.append(row);
+                });
+            });
+        }
+
+        // Update the table when the page loads
+        updateTable();
+
+        // Search functionality
+        $('#searchButton').click(function() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("resumesTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Postings</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='job_notifi_styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Job Postings</h1>
+        <a href="/student/dashboard" class="back-button">&lt; Back 👋</a>
+    </header>
+    <h1>Inbox</h1>
+    <div id="inbox" class="email-list">
+        {% for job in job_notifi %}
+        <div class="job-post">
+            <h3>{{ job[1] }}</h3>
+            <button class="see-full-btn">Details</button>
+            <p style="display: none;"><strong>Description:</strong> {{ job[2] | safe }}</p>
+            <p style="display: none;"><strong>Skills Required:</strong> {{ job[3] }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="modal" id="fullPostingModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeFullPostingModal">&times;</span>
+            <h2 id="fullPostingTitle"></h2>
+            <p id="fullPostingDescription"></p>
+            <p id="fullPostingSkills"></p>
+        </div>
+    </div>
+
+    <script>
+
+        function linkify(inputText) {
+            var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+            // URLs starting with http://, https://, or ftp://
+            replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=_|!:,.;]*[-A-Z0-9+&@#\/%= _ |])/gi;
+            replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+            // URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+            replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gi;
+            replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+            return replacedText;
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const inbox = document.getElementById('inbox');
+            const fullPostingModal = document.getElementById('fullPostingModal');
+            const closeFullPostingModal = document.getElementById('closeFullPostingModal');
+
+            // Function to fetch job postings from the server and update the UI
+            function fetchJobPostings() {
+                fetch('/get_job_postings')  // Make sure this URL matches your server route
+                    .then(response => response.json())
+                    .then(jobs => {
+                        inbox.innerHTML = ''; // Clear existing job postings
+                        for (let job of jobs) {
+                            inbox.innerHTML += `
+                                <div class="job-post">
+                                    <h3>${job.title}</h3>
+                                    <button class="see-full-btn">Details</button>
+                                    <p style="display: none;"><strong>Description:</strong> ${job.description}</p>
+                                    <p style="display: none;"><strong>Skills Required:</strong> ${job.skills}</p>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching job postings:', error);
+                    });
+            }
+
+            // Add event listener for the "Details" button
+            inbox.addEventListener('click', function(event) {
+                if (event.target.classList.contains('see-full-btn')) {
+                    const jobPost = event.target.parentNode;
+                    const title = jobPost.querySelector('h3').textContent; // Get title from h3 element
+                    const description = jobPost.querySelector('p:nth-child(3)').textContent;
+                    const skills = jobPost.querySelector('p:nth-child(4)').textContent;
+
+                    // Display modal with job details
+                    document.getElementById('fullPostingTitle').textContent = title; // Display title
+                    document.getElementById('fullPostingDescription').innerHTML = linkify(description); // Call linkify function
+                    document.getElementById('fullPostingSkills').textContent = skills;
+                    fullPostingModal.style.display = 'block';
+                }
+            });
+
+            // Close full posting modal when the close button is clicked
+            closeFullPostingModal.addEventListener('click', function() {
+                fullPostingModal.style.display = 'none';
+            });
+
+            // Fetch job postings initially when the page loads
+            fetchJobPostings();
+        });
+    </script>
+</body>
+</html>

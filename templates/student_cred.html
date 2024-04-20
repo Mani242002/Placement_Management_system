@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Credentials</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='student_cred_styles.css') }}">
+</head>
+<body>
+ <div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+     <div class="wave"></div>
+  </div>
+  <div class="container">
+    <h1>Student Credentials</h1>
+    <a href="/admin/dashboard" class="back-button">&lt; Back</a>
+    <button id="addStudentBtn">Add New Student</button>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Password</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+    {% for student in student_cred %}
+    <tr>
+        <td>{{ student[0] }}</td>
+        <td>{{ student[1] }}</td>
+        <td>{{ student[2] }}</td>
+        <td>
+            <form action="/delete_student" method="POST">
+                <input type="hidden" name="student_id" value="{{ student[0] }}">
+                <button type="submit" class="deleteBtn">Delete</button>
+            </form>
+            <button class="updateBtn" data-id="{{ student[0] }}">Update</button>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+    </table>
+  </div>
+
+  <!-- Modal for adding new student -->
+  <!-- Modal for adding new student -->
+<div id="addStudentModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Add New Student</h2>
+    <form id="addStudentForm">
+      <label for="studentId">Student ID:</label>
+      <input type="text" id="studentId" name="studentId" required>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+      <label for="password">Password:</label>
+      <input type="text" id="password" name="password" required>
+      <button type="submit">Add Student</button>
+    </form>
+  </div>
+</div>
+
+  <!-- Modal for updating student details -->
+  <div id="updateStudentModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Update Student Details</h2>
+      <form id="updateStudentForm">
+        <input type="hidden" id="studentIdToUpdate">
+        <label for="updatedUsername">Updated Username:</label>
+        <input type="text" id="updatedUsername" name="updatedUsername" required>
+        <label for="updatedPassword">Updated Password:</label>
+        <input type="text" id="updatedPassword" name="updatedPassword" required>
+        <button type="submit">Update Student</button>
+      </form>
+    </div>
+  </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  const addStudentBtn = document.getElementById('addStudentBtn');
+  const addStudentModal = document.getElementById('addStudentModal');
+  const closeModal = document.querySelector('.close');
+  const addStudentForm = document.getElementById('addStudentForm');
+  const studentTableBody = document.querySelector('tbody');
+  const updateStudentModal = document.getElementById('updateStudentModal');
+
+  // Function to clear input fields
+  function clearInputFields() {
+    document.getElementById('studentId').value = '';
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+  }
+
+  // Event listener for "Add New Student" button
+  addStudentBtn.addEventListener('click', function() {
+    addStudentModal.style.display = 'block';
+  });
+
+  // Event listener for closing the modal
+  closeModal.addEventListener('click', function() {
+    addStudentModal.style.display = 'none';
+    clearInputFields();  // Clear input fields when close button is clicked
+  });
+
+  // Event listener for submitting the add student form
+  addStudentForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    // Get form data
+    const formData = new FormData(addStudentForm);
+    // Make AJAX request to add new student
+    fetch('/add_student', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // If student added successfully, close modal, refresh student table, and clear input fields
+        addStudentModal.style.display = 'none';
+        fetchStudentCredentials();
+        clearInputFields();
+      } else {
+        // If student addition failed, clear input fields and show error message
+        clearInputFields();
+        alert(data.message);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+
+    // Function to fetch and display student credentials
+    function fetchStudentCredentials() {
+      fetch('/admin/get_student_credentials')
+      .then(response => response.json())
+      .then(data => {
+        // Clear existing table rows
+        studentTableBody.innerHTML = '';
+        // Append new table rows with student credentials
+        data.forEach(student => {
+          const row = `
+            <tr>
+              <td>${student[0]}</td>
+              <td>${student[1]}</td>
+              <td>${student[2]}</td>
+              <td>
+                <button class="deleteBtn" data-id="{{ student_cred[0] }}">Delete</button>
+                <button class="updateBtn" data-id="${student[0]}">Update</button>
+              </td>
+            </tr>
+          `;
+          studentTableBody.innerHTML += row;
+        });
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+    // Initial fetch of student credentials when page loads
+    fetchStudentCredentials();
+
+    // Event listener for delete button click
+    studentTableBody.addEventListener('click', function(event) {
+      if (event.target.classList.contains('deleteBtn')) {
+        const studentId = event.target.parentElement.parentElement.querySelector('td:first-child').textContent;
+        // Make AJAX request to delete student using DELETE method
+        fetch(`/delete_student`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ student_id: studentId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // If student deleted successfully, refresh student table
+            fetchStudentCredentials();
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      } else if (event.target.classList.contains('updateBtn')) {
+        const studentId = event.target.dataset.id;
+        // Populate the modal with student details to be updated
+        const studentUsername = event.target.parentElement.parentElement.querySelector('td:nth-child(2)').textContent;
+        const studentPassword = event.target.parentElement.parentElement.querySelector('td:nth-child(3)').textContent;
+        document.getElementById('studentIdToUpdate').value = studentId;
+        document.getElementById('updatedUsername').value = studentUsername;
+        document.getElementById('updatedPassword').value = studentPassword;
+        // Display the update student modal
+        updateStudentModal.style.display = 'block';
+      }
+    });
+
+    // Event listener for closing the update student modal
+    document.querySelector('#updateStudentModal .close').addEventListener('click', function() {
+      updateStudentModal.style.display = 'none';
+    });
+
+    // Event listener for submitting the update student form
+    document.getElementById('updateStudentForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const studentId = document.getElementById('studentIdToUpdate').value;
+      const updatedUsername = document.getElementById('updatedUsername').value;
+      const updatedPassword = document.getElementById('updatedPassword').value;
+
+      // Make AJAX request to update student details
+      fetch(`/update_student/${studentId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username: updatedUsername, password: updatedPassword })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // If student details updated successfully, close modal and refresh student table
+          updateStudentModal.style.display = 'none';
+          fetchStudentCredentials();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  });
+</script>
+</body>
+</html>

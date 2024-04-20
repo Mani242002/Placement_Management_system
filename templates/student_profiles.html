@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Profiles</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='student_profiles_styles.css') }}">
+</head>
+<body>
+
+<!-- Heading container -->
+<div class="heading-container">
+  <!-- Main Heading -->
+  <div class="main-heading">
+    <h1 style="color: white;">Student Profiles</h1>
+    <a href="/admin/dashboard" class="back-button">&lt; Back 👋</a>
+    <button id="home-button"> Home 🏠</button>
+  </div>
+  <!-- Buttons -->
+  <div class="main-heading-buttons">
+    <button id="addStudentBtn">Add New Student</button>
+    <select id="departmentSelect">
+      <option value="" selected disabled>Select Department</option>
+    </select>
+    <div class="searchContainer">
+      <input type="text" id="searchInput" placeholder="Search...">
+      <button id="searchButton"><i class="fas fa-search"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- Container for student profiles table -->
+<div class="container">
+  <!-- Student Profiles Table -->
+  <div id="studentTableContainer">
+    <table id="studentTable">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Backlogs</th>
+          <th>CGPA</th>
+          <th>Department</th>
+          <th>Year</th>
+          <th>Action</th> <!-- New column -->
+        </tr>
+      </thead>
+      <tbody id="studentTableBody">
+        <!-- Student details will be populated dynamically -->
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- Modal for adding new student -->
+<div id="addStudentModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Add New Student</h2>
+    <form id="addStudentForm">
+      <label for="studentId">Student ID:</label>
+      <input type="text" id="studentId" name="studentId" required><br>
+
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required><br>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required><br>
+
+      <label for="phoneNumber">Phone Number:</label>
+      <input type="text" id="phoneNumber" name="phoneNumber" required><br>
+
+      <label for="backlogs">Backlogs:</label>
+      <input type="number" id="backlogs" name="backlogs" required><br>
+
+      <label for="cgpa">CGPA:</label>
+      <input type="number" id="cgpa" name="cgpa" step="0.01" required><br>
+
+      <label for="department">Department:</label>
+      <input type="text" id="department" name="department" required><br>
+
+      <label for="year">Year:</label>
+      <input type="number" id="year" name="year" required><br>
+
+      <button type="submit">Add Student</button>
+    </form>
+  </div>
+</div>
+
+<div id="updateStudentModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Update Student Details</h2>
+    <form id="updateStudentForm">
+      <label for="updateName">Name:</label>
+      <input type="text" id="updateName" name="updateName" required><br>
+
+      <label for="updateEmail">Email:</label>
+      <input type="email" id="updateEmail" name="updateEmail" required><br>
+
+      <label for="updatePhoneNumber">Phone Number:</label>
+      <input type="text" id="updatePhoneNumber" name="updatePhoneNumber" required><br>
+
+      <label for="updateBacklogs">Backlogs:</label>
+      <input type="number" id="updateBacklogs" name="updateBacklogs" required><br>
+
+      <label for="updateCGPA">CGPA:</label>
+      <input type="number" id="updateCGPA" name="updateCGPA" step="0.01" required><br>
+
+      <label for="updateDepartment">Department:</label>
+      <input type="text" id="updateDepartment" name="updateDepartment" required><br>
+
+      <label for="updateYear">Year:</label>
+      <input type="number" id="updateYear" name="updateYear" required><br>
+
+      <input type="hidden" id="updateStudentId" name="updateStudentId">
+
+      <button type="submit">Update Student</button>
+    </form>
+  </div>
+</div>
+
+<!-- Script for handling data population -->
+<script>
+  document.getElementById("home-button").addEventListener("click", function() {
+    window.location.reload();
+});
+document.addEventListener('DOMContentLoaded', () => {
+  // Fetch student details using AJAX
+  fetch('/get_all_students')
+    .then(response => response.json())
+    .then(data => {
+      // Populate the table with student details
+      const tableBody = document.getElementById('studentTableBody');
+      data.forEach(student => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.student_id}</td>
+          <td>${student.name}</td>
+          <td>${student.email}</td>
+          <td>${student.phone_num}</td>
+          <td>${student.backlogs}</td>
+          <td>${student.cgpa}</td>
+          <td>${student.department}</td>
+          <td>${student.year}</td>
+          <td>
+            <button class="delete-btn" data-student-id="${student.student_id}">Delete</button>
+            <button class="update-btn" data-student-id="${student.student_id}">Update</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+
+        // Add event listener to the delete button
+        const deleteButton = row.querySelector('.delete-btn');
+        deleteButton.addEventListener('click', () => {
+          const studentId = deleteButton.dataset.studentId;
+          deleteStudent(studentId, row);
+        });
+      });
+    })
+    .catch(error => console.error('Error:', error));
+
+  // Fetch departments using AJAX
+  fetch('/get_departments')
+
+    .then(response => response.json())
+    .then(data => {
+      const departmentSelect = document.getElementById('departmentSelect');
+      data.forEach(department => {
+
+        const option = document.createElement('option');
+        option.value = department;
+        option.textContent = department;
+        departmentSelect.appendChild(option);
+      });
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+// Event listener for department selection
+document.getElementById('departmentSelect').addEventListener('change', () => {
+  const selectedDepartment = document.getElementById('departmentSelect').value;
+  // Fetch student details for the selected department
+  fetch('/get_students_by_department?department=' + selectedDepartment)
+    .then(response => response.json())
+    .then(data => {
+      // Clear existing table rows
+      const tableBody = document.getElementById('studentTableBody');
+      tableBody.innerHTML = '';
+      // Populate the table with student details
+      data.forEach(student => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.student_id}</td>
+          <td>${student.name}</td>
+          <td>${student.email}</td>
+          <td>${student.phone_number}</td>
+          <td>${student.backlogs}</td>
+          <td>${student.cgpa}</td>
+          <td>${student.department}</td>
+          <td>${student.year}</td>
+          <td>
+            <button class="delete-btn" data-student-id="${student.student_id}">Delete</button>
+            <button class="update-btn" data-student-id="${student.student_id}">Update</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+
+        // Add event listener to the delete button
+        const deleteButton = row.querySelector('.delete-btn');
+        deleteButton.addEventListener('click', () => {
+          const studentId = deleteButton.dataset.studentId;
+          deleteStudent(studentId, row);
+        });
+      });
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+document.getElementById('searchButton').addEventListener('click', () => {
+  const searchQuery = document.getElementById('searchInput').value;
+  // Fetch student details for the search query
+  fetch('/search_students?query=' + searchQuery)
+    .then(response => response.json())
+    .then(data => {
+      // Clear existing table rows
+      const tableBody = document.getElementById('studentTableBody');
+      tableBody.innerHTML = '';
+      // Populate the table with student details
+      data.forEach(student => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.student_id}</td>
+          <td>${student.name}</td>
+          <td>${student.email}</td>
+          <td>${student.phone_num}</td>
+          <td>${student.backlogs}</td>
+          <td>${student.cgpa}</td>
+          <td>${student.department}</td>
+          <td>${student.year}</td>
+          <td>
+            <button class="delete-btn" data-student-id="${student.student_id}">Delete</button>
+            <button class="update-btn" data-student-id="${student.student_id}">Update</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+
+        // Add event listener to the delete button
+        const deleteButton = row.querySelector('.delete-btn');
+        deleteButton.addEventListener('click', () => {
+          const studentId = deleteButton.dataset.studentId;
+          deleteStudent(studentId, row);
+        });
+      });
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+// Add event listener for update buttons
+document.addEventListener('click', event => {
+  if (event.target.classList.contains('update-btn')) {
+    const studentId = event.target.dataset.studentId;
+    const studentRow = event.target.parentElement.parentElement;
+    const studentName = studentRow.children[1].textContent;
+    const studentEmail = studentRow.children[2].textContent;
+    const studentPhoneNumber = studentRow.children[3].textContent;
+    const studentBacklogs = studentRow.children[4].textContent;
+    const studentCGPA = studentRow.children[5].textContent;
+    const studentDepartment = studentRow.children[6].textContent;
+    const studentYear = studentRow.children[7].textContent;
+
+    // Populate the update form with current details
+    document.getElementById('updateStudentId').value = studentId;
+    document.getElementById('updateName').value = studentName;
+    document.getElementById('updateEmail').value = studentEmail;
+    document.getElementById('updatePhoneNumber').value = studentPhoneNumber;
+    document.getElementById('updateBacklogs').value = studentBacklogs;
+    document.getElementById('updateCGPA').value = studentCGPA;
+    document.getElementById('updateDepartment').value = studentDepartment;
+    document.getElementById('updateYear').value = studentYear;
+
+    // Show the update modal
+    document.getElementById('updateStudentModal').style.display = 'block';
+  }
+});
+
+// Close the update modal when the close button is clicked
+document.querySelector('#updateStudentModal .close').addEventListener('click', () => {
+  document.getElementById('updateStudentModal').style.display = 'none';
+});
+
+// Close the update modal when clicking outside of it
+window.addEventListener('click', event => {
+  if (event.target === document.getElementById('updateStudentModal')) {
+    document.getElementById('updateStudentModal').style.display = 'none';
+  }
+});
+
+// Handle update form submission
+document.getElementById('updateStudentForm').addEventListener('submit', event => {
+  event.preventDefault();
+
+  const formData = new FormData(document.getElementById('updateStudentForm'));
+
+  fetch('/update_student_profile', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Update the table with the new details
+      // You can implement this part after updating the server-side route
+      alert('Student details updated successfully!');
+      document.getElementById('updateStudentModal').style.display = 'none';
+      window.location.reload();
+    } else {
+      alert('Failed to update student details: ' + data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred while updating student details.');
+  });
+});
+
+// Function to delete a student
+function deleteStudent(studentId, row) {
+  fetch(`/delete_student_profile?student_id=${studentId}`, {
+    method: 'DELETE'
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Remove the corresponding row from the table
+      row.remove();
+      alert('Student deleted successfully!');
+    } else {
+      alert('Failed to delete student: ' + data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred while deleting student.');
+  });
+}
+
+// Add student modal functionality
+const addStudentBtn = document.getElementById('addStudentBtn');
+const modal = document.getElementById('addStudentModal');
+const closeBtn = document.querySelector('.close');
+const form = document.getElementById('addStudentForm');
+
+// Show modal when Add New Student button is clicked
+addStudentBtn.addEventListener('click', () => {
+  modal.style.display = 'block';
+});
+
+// Close modal when close button is clicked
+closeBtn.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
+// Close modal when clicking outside of it
+window.addEventListener('click', event => {
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+
+// Handle form submission
+// Handle form submission
+form.addEventListener('submit', event => {
+  event.preventDefault();
+
+  // Get form data
+  const formData = new FormData(form);
+
+  // Send form data to Flask route
+  fetch('/add_new_student', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Handle response from server
+    if (data.success) {
+      // Close modal and do any other necessary actions
+      modal.style.display = 'none';
+      alert('Student added successfully!');
+      window.location.reload();
+      // Fetch student details again to refresh the table
+      fetch('/get_all_students')
+        .then(response => response.json())
+        .then(data => {
+          // Clear existing table rows
+          const tableBody = document.getElementById('studentTableBody');
+          tableBody.innerHTML = '';
+          // Populate the table with student details
+          data.forEach(student => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${student.student_id}</td>
+              <td>${student.name}</td>
+              <td>${student.email}</td>
+              <td>${student.phone_num}</td>
+              <td>${student.backlogs}</td>
+              <td>${student.cgpa}</td>
+              <td>${student.department}</td>
+              <td>${student.year}</td>
+              <td>
+                <button class="delete-btn" data-student-id="${student.student_id}">Delete</button>
+                <button class="update-btn" data-student-id="${student.student_id}">Update</button>
+              </td>
+            `;
+            tableBody.appendChild(row);
+
+            // Add event listener to the delete button
+            const deleteButton = row.querySelector('.delete-btn');
+            deleteButton.addEventListener('click', () => {
+              const studentId = deleteButton.dataset.studentId;
+              deleteStudent(studentId, row);
+            });
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+      alert('Failed to add student: ' + data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred while adding student.');
+  });
+});
+</script>
+
+</body>
+</html>

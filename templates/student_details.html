@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Student_details_styles.css') }}">
+    <!-- Add Bootstrap CSS link -->
+    <!-- Add Cropper CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<button class="back-button" id="backButton">&lt;Back👋</button>
+<!-- The Modal -->
+<div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <img id="image" src="">
+    <button id="apply">Apply</button>
+  </div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>Profile</h1>
+    </div>
+    <div class="content">
+        <div class="image-holder">
+            <!-- Profile picture container -->
+            <div class="profile-picture-container">
+                <!-- Profile picture -->
+                <img id="profile-picture" src="" alt="Student Image">
+                <!-- Placeholder image -->
+                <img id="placeholder-image" src="/static/images/ad.jpeg" alt="Placeholder Image">
+                <!-- Overlay with buttons -->
+                <div class="overlay">
+                    <button class="btn btn-danger btn-delete">Delete</button>
+                    <button class="btn btn-success btn-upload">Upload</button>
+                </div>
+            </div>
+        </div>
+        <div class="details-holder" id="studentDetailsBody">
+            <!-- Student details will be displayed here -->
+        </div>
+    </div>
+</div>
+<!-- Additional Details Button -->
+<button class="btn btn-primary" id="additionalDetails" onclick="showAdditionalContainer()">Additional Details</button>
+<!-- Additional Details Container -->
+<div id="additionalContainer">
+    <!-- Add a "Close" button inside the container -->
+    <button class="btn btn-danger" id="closeButton" onclick="hideAdditionalContainer()">Close</button>
+    <!-- Personal Details Container -->
+<div id="personalDetailsContainer">
+    <h2>Personal Details</h2>
+    <button class="btn btn-primary" id="editPersonalDetails" onclick="showPersonalDetailsModal()">Add</button>
+    <div id="personalDetailsContent">
+        <!-- Personal details will be displayed here -->
+    </div>
+</div>
+
+<!-- Personal Details Modal -->
+<div id="personalDetailsModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close" onclick="hideModal('personalDetailsModal')">&times;</span>
+        <h2>Edit Personal Details</h2>
+        <form id="personalDetailsForm">
+            <label for="dateOfBirth">Date of Birth:</label>
+            <input type="date" id="dateOfBirth" name="dateOfBirth"><br>
+            <label for="fatherName">Father's Name:</label>
+            <input type="text" id="fatherName" name="fatherName"><br>
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" name="gender"><br>
+            <label for="hobbies">Hobbies:</label>
+            <input type="text" id="hobbies" name="hobbies"><br>
+            <button type="button" onclick="savePersonalDetails()">Save</button>
+        </form>
+    </div>
+</div>
+    <!-- Skills Container -->
+    <div id="skillsContainer">
+        <h2>Skills</h2>
+        <button class="btn btn-primary" id="editSkills" onclick="showModal('skillsModal')">Add</button>
+        <div id="skillsList"></div>
+    </div>
+    <!-- References Container -->
+<div id="referencesContainer">
+
+    <h2>References</h2>
+    <button class="btn btn-primary" id="editReferences" onclick="showModal('referencesModal')">Add</button>
+    <div id="referencesList"></div>
+</div>
+
+    <!-- Skills Modal -->
+<div id="skillsModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close" onclick="hideModal('skillsModal')">&times;</span>
+
+        <!-- Dropdown menu for selecting skills -->
+        <select id="skillSelect">
+            <option value="">Select Skill</option> <!-- Add a default option -->
+            {% for skill in skills_list %}
+                <option value="{{ skill }}">{{ skill }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Dropdown menu for selecting proficiency levels -->
+        <select id="proficiencySelect">
+            <option value="">Select Proficiency Level</option> <!-- Add a default option -->
+            {% for level in proficiency_levels %}
+                <option value="{{ level }}">{{ level }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Add button to add a new skill -->
+<button id="addSkillButton" onclick="addSkill()">Add</button>
+
+        <!-- Add modal dialog for displaying skills -->
+        <div id="skillsDisplay" style="display: none;">
+            <h2>Skills</h2>
+            <table id="skillsTable">
+                <!-- Skills will be dynamically populated here -->
+            </table>
+        </div>
+    </div>
+</div>
+
+       <!-- References Modal -->
+<div id="referencesModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close" onclick="hideModal('referencesModal')">&times;</span>
+        <!-- Add your form fields here -->
+        <div>
+            <div id="linkedin" class="box">LinkedIn</div>
+            <input type="text" id="linkedinInput" placeholder="LinkedIn">
+        </div>
+        <div>
+            <div id="github" class="box">GitHub</div>
+            <input type="text" id="githubInput" placeholder="GitHub">
+        </div>
+        <div>
+            <div id="twitter" class="box">Twitter</div>
+            <input type="text" id="twitterInput" placeholder="Twitter">
+        </div>
+        <div>
+            <div id="facebook" class="box">Facebook</div>
+            <input type="text" id="facebookInput" placeholder="Facebook">
+        </div>
+        <button id="submitReferences">Submit</button>
+    </div>
+</div>
+</div>>
+
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Add Cropper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+<script>
+document.getElementById("backButton").addEventListener("click", function() {
+    window.location.href = '/student/dashboard';
+});
+function showAdditionalContainer() {
+    var x = document.getElementById("additionalContainer");
+    var btn = document.getElementById("additionalDetails");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+        btn.style.display = "none"; // Hide the "Additional Details" button
+    } else {
+        x.style.display = "none";
+        btn.style.display = "block"; // Show the "Additional Details" button
+    }
+}
+// Function to fetch and display personal details
+function fetchPersonalDetails() {
+    fetch('/get_personal_details')
+        .then(response => response.json())
+        .then(data => {
+            if ('error' in data) {
+                console.error(data.error);
+                // Handle the error
+            } else {
+                const personalDetailsContent = document.getElementById('personalDetailsContent');
+                personalDetailsContent.innerHTML = ''; // Clear previous content
+
+                // Create HTML elements for each detail
+                for (const detail of data.personal_details) {
+                    let detailElement = document.createElement('p');
+                    if (detail.key === 'Date of Birth') {
+                        // Format date of birth
+                        let dateOfBirth = new Date(detail.value).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                        detailElement.innerHTML = `<strong>${detail.key}:</strong> ${dateOfBirth}`;
+                    } else {
+                        detailElement.innerHTML = `<strong>${detail.key}:</strong> ${detail.value}`;
+                    }
+                    personalDetailsContent.appendChild(detailElement);
+                }
+
+                // Update the button text based on the details
+                const editButton = document.getElementById('editPersonalDetails');
+                if (data.personal_details.length > 0) {
+                    editButton.textContent = 'Edit';
+                } else {
+                    editButton.textContent = 'Add';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching personal details:', error);
+            // Handle the error
+        });
+}
+
+
+// Function to format a date in yyyy-mm-dd format
+function formatDate(dateString) {
+    let date = new Date(dateString);
+    let year = date.getFullYear();
+    let month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are 0-indexed in JavaScript
+    let day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+}
+
+// Function to show the personal details modal
+function showPersonalDetailsModal() {
+    // Fetch the existing details
+    fetch('/get_personal_details')
+        .then(response => response.json())
+        .then(data => {
+            if ('error' in data) {
+                console.error(data.error);
+                // Handle the error
+            } else {
+                // Create an object to store the personal details
+                let personalDetails = {};
+                for (let detail of data.personal_details) {
+                    personalDetails[detail.key] = detail.value;
+                }
+
+                // Populate the input fields with the existing details
+                document.getElementById('dateOfBirth').value = formatDate(personalDetails['Date of Birth']) || '';
+                document.getElementById('fatherName').value = personalDetails["Father's Name"] || '';
+                document.getElementById('gender').value = personalDetails['Gender'] || '';
+                document.getElementById('hobbies').value = personalDetails['Hobbies'] || '';
+
+                // Show the modal
+                showModal('personalDetailsModal');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching personal details:', error);
+            // Handle the error
+        });
+}
+
+
+// Function to save personal details
+function savePersonalDetails() {
+    const form = document.getElementById('personalDetailsForm');
+    const formData = new FormData(form);
+
+    fetch('/save_personal_details', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if ('success' in data) {
+            // If save is successful, close the modal and update personal details
+            hideModal('personalDetailsModal');
+            fetchPersonalDetails();
+        } else {
+            console.error('Error saving personal details:', data.error);
+            // Handle the error
+        }
+    })
+    .catch(error => {
+        console.error('Error saving personal details:', error);
+        // Handle the error
+    });
+}
+
+// Call the function to fetch and display personal details when the page loads
+document.addEventListener('DOMContentLoaded', fetchPersonalDetails);
+function hideAdditionalContainer() {
+    var x = document.getElementById("additionalContainer");
+    var btn = document.getElementById("additionalDetails");
+    x.style.display = "none";
+    btn.style.display = "block"; // Show the "Additional Details" button
+}
+    // JavaScript code to fetch profile picture and student details
+function fetchProfilePicture() {
+    // Make a GET request to the Flask route
+    fetch('/get_profile_picture')
+        .then(response => response.json())
+        .then(data => {
+            // Check if the response contains an error
+            if ('error' in data) {
+                console.error(data.error);
+                // Handle the error (e.g., display an error message)
+            } else {
+                const profilePicture = document.getElementById('profile-picture');
+                const placeholderImage = document.getElementById('placeholder-image');
+                // If no error and profile picture is available, set the profile picture src attribute
+                if (data.picture_path) {
+                    profilePicture.src = data.picture_path;
+                    profilePicture.style.display = 'block'; // Show the profile picture
+                    placeholderImage.style.display = 'none'; // Hide the placeholder image
+                } else {
+                    // If no profile picture available, show the placeholder image
+                    placeholderImage.style.display = 'block'; // Show the placeholder image
+                    profilePicture.style.display = 'none'; // Hide the profile picture
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching profile picture:', error);
+            // Handle the error (e.g., display an error message)
+        });
+
+
+        // Fetch and display student details
+fetch('/get_student_details')
+    .then(response => response.json())
+    .then(data => {
+        if ('error' in data) {
+            console.error(data.error);
+            // Handle the error
+        } else {
+            const studentDetails = data.student_details;
+            let detailsHolder = document.getElementById('studentDetailsBody');
+            detailsHolder.innerHTML = ''; // Clear previous content
+
+            // Create HTML elements for each detail
+            for (const detail of studentDetails) {
+                let detailElement = document.createElement('p');
+                detailElement.innerHTML = `<strong>${detail.key}:</strong> ${detail.value}`;
+                detailsHolder.appendChild(detailElement);
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching student details:', error);
+        // Handle the error
+    });
+
+    }
+   // Call the function to fetch the profile picture and student details when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchProfilePicture();
+    addEventListeners();
+});
+
+// Function to add event listeners to buttons
+function addEventListeners() {
+    // Delete button event listener
+    const deleteButton = document.querySelector('.btn-delete');
+    if (deleteButton) {
+        deleteButton.addEventListener('click', handleDeleteButtonClick);
+    }
+}
+
+// JavaScript code to handle delete button click
+function handleDeleteButtonClick() {
+    fetch('/delete_profile_picture', {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if ('success' in data) {
+            // If deletion is successful, hide the profile picture
+            var profilePicture = document.getElementById('profile-picture');
+            profilePicture.style.display = 'none';
+            // Show the placeholder image
+            var placeholderImage = document.getElementById('placeholder-image');
+            placeholderImage.style.display = 'block';
+            windows.location.reload();
+            // Only hide the overlay if the profile picture is present
+            if (profilePicture.src) {
+                var overlay = document.querySelector('.overlay');
+                overlay.style.opacity = '0';
+                overlay.style.display = 'none';
+            }
+        } else {
+            console.error('Error deleting profile picture:', data.error);
+            // Handle the error
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting profile picture:', error);
+        // Handle the error
+    });
+}
+// Upload button event listener
+const uploadButton = document.querySelector('.btn-upload');
+if (uploadButton) {
+    uploadButton.addEventListener('click', handleUploadButtonClick);
+}
+// JavaScript code to handle upload button click
+function handleUploadButtonClick() {
+    // Create a new input element
+    let input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.jpg,.jpeg,.png'; // Only accept .jpg, .jpeg, and .png files
+
+    // Listen for changes to the input field
+    input.onchange = e => {
+        // Get the file
+        let file = e.target.files[0];
+
+        // Get the image element
+        let image = document.getElementById('image');
+        image.src = URL.createObjectURL(file);
+
+        // Create a Cropper instance
+        let cropper = new Cropper(image, {
+            aspectRatio: 1,
+            viewMode: 1,
+            autoCropArea: 1,
+            crop(event) {
+                console.log(event.detail.x);
+                console.log(event.detail.y);
+                console.log(event.detail.width);
+                console.log(event.detail.height);
+                console.log(event.detail.rotate);
+                console.log(event.detail.scaleX);
+                console.log(event.detail.scaleY);
+            },
+        });
+
+        // Get the modal
+        let modal = document.getElementById('myModal');
+
+        // Get the <span> element that closes the modal
+        let span = document.getElementsByClassName('close')[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Show the modal
+        modal.style.display = 'block';
+
+        // Add a button to apply the crop
+        let button = document.getElementById('apply');
+        button.onclick = () => {
+            // Get the cropped image
+            cropper.getCroppedCanvas().toBlob((blob) => {
+                // Create a FormData object
+                let formData = new FormData();
+
+                // Add the file to the form data
+                formData.append('profile-picture', blob, file.name);
+
+                // Send the form data using fetch
+                fetch('/upload_profile_picture', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if ('success' in data) {
+                        // If upload is successful, refresh the page
+                        location.reload();
+                    } else {
+                        console.error('Error uploading profile picture:', data.error);
+                        // Handle the error
+                    }
+                })
+                .catch(error => {
+                    console.error('Error uploading profile picture:', error);
+                    // Handle the error
+                });
+            });
+        };
+    }
+
+    // Trigger the input element to open the file dialog
+    input.click();
+}
+
+    // Call the function to fetch the profile picture and student details when the page loads
+    document.addEventListener('DOMContentLoaded', fetchProfilePicture);
+    // Function to show a modal
+function showModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = 'block';
+}
+
+// Function to hide a modal
+function hideModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = 'none';
+}
+function addSkill() {
+    // Get the selected skill and proficiency level
+    var selectedSkill = document.getElementById("skillSelect").value;
+    var selectedProficiency = document.getElementById("proficiencySelect").value;
+
+    // Check if both skill and proficiency level are selected
+    if (selectedSkill && selectedProficiency) {
+        // Send a POST request to Flask backend to add the skill
+        fetch('/add_skill', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                skill: selectedSkill,
+                proficiencyLevel: selectedProficiency
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the server
+            if (data.success) {
+                // If skill is added successfully, display a success message
+                alert("Details added successfully!");
+                // Close the modal
+                hideModal('skillsModal');
+                fetchSkills();
+            } else {
+                // If an error occurs, log the error message
+                console.error("Error:", data.error);
+            }
+        })
+        .catch(error => {
+            // Log any network error
+            console.error('Error:', error);
+        });
+    } else {
+        // If skill or proficiency level is not selected, display an error message
+        console.error("Please select both skill and proficiency level.");
+    }
+}
+function fetchSkills() {
+    fetch('/get_skills', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            var skillsList = document.getElementById("skillsList");
+            // Clear the skills list
+            skillsList.innerHTML = '';
+            data.skills.forEach(function(skill) {
+                // Create a new div for each skill
+                var newSkill = document.createElement("div");
+                newSkill.className = "skill-container"; // Add a class for styling
+
+                // Create a span for the skill name and proficiency
+                var skillText = document.createElement("span");
+                var proficiency = skill.proficiency.replace('%', '');
+                skillText.textContent = skill.name + " (" + proficiency + "%)";
+                newSkill.appendChild(skillText);
+                // Create the Delete button
+                var deleteButton = document.createElement("button");
+                deleteButton.className = "delete-button";
+                deleteButton.onclick = function() {
+                    // Send a POST request to the server to delete the skill
+                    fetch('/delete_skill', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            'skill': skill.name
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the skill container from the skills list
+                            skillsList.removeChild(newSkill);
+                        } else {
+                            console.error("Error:", data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                };
+
+                newSkill.appendChild(deleteButton);
+
+                // Append the newSkill div to the skillsList
+                skillsList.appendChild(newSkill);
+            });
+        } else {
+            console.error("Error:", data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+window.onload = fetchSkills();
+
+document.getElementById('submitReferences').addEventListener('click', function() {
+    var linkedin = document.getElementById('linkedinInput').value || null;
+    var github = document.getElementById('githubInput').value || null;
+    var twitter = document.getElementById('twitterInput').value || null;
+    var facebook = document.getElementById('facebookInput').value || null;
+
+    var data = {
+        'linkedin': linkedin,
+        'github': github,
+        'twitter': twitter,
+        'facebook': facebook,
+        'index': currentReferenceIndex
+    };
+
+    fetch('/save_references', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(function(response) {
+        if(response.ok) {
+            alert('Data saved successfully');
+            hideModal('referencesModal');
+            get_references();
+            currentReferenceIndex = null;
+        } else {
+            alert('Error saving data');
+        }
+        return response.text();
+    }).then(function(text) {
+        console.log(text);
+    });
+});
+
+function get_references() {
+    fetch('/get_references', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(function(response) {
+        if(response.ok) {
+            return response.json();
+        } else {
+            alert('Error fetching data');
+        }
+    }).then(function(data) {
+        var referencesList = document.getElementById('referencesList');
+        // Clear the list before appending new references
+        referencesList.innerHTML = '';
+        for(var i = 0; i < data.length; i++) {
+            var reference = document.createElement('div');
+            reference.className = 'reference';
+            reference.innerHTML = '<p>LinkedIn: ' + data[i].linkedin + '</p><p>GitHub: ' + data[i].github + '</p><p>Twitter: ' + data[i].twitter + '</p><p>Facebook: ' + data[i].facebook + '</p><button class="editButton" onclick="editReference(' + i + ')">Edit</button>';
+            referencesList.appendChild(reference);
+        }
+    });
+};
+window.onload = get_references()
+var currentReferenceIndex = null;
+
+function editReference(index) {
+    currentReferenceIndex = index;
+    fetch('/get_references', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(function(response) {
+        if(response.ok) {
+            return response.json();
+        } else {
+            alert('Error fetching data');
+        }
+    }).then(function(data) {
+        document.getElementById('linkedinInput').value = data[index].linkedin;
+        document.getElementById('githubInput').value = data[index].github;
+        document.getElementById('twitterInput').value = data[index].twitter;
+        document.getElementById('facebookInput').value = data[index].facebook;
+        showModal('referencesModal');
+    });
+}
+
+</script>
+
+</body>
+</html>
